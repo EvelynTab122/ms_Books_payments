@@ -1,12 +1,13 @@
 package com.unir.proyecto.data.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDate;
 import java.util.List;
 
 @Entity
-@Table(name = "orders")
+@Table(name = "orden")
 @Getter
 @Setter
 @AllArgsConstructor
@@ -30,5 +31,6 @@ public class Orden {
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "ordenId")
+    @JsonManagedReference
     private List<OrdenItem> libros;
 }

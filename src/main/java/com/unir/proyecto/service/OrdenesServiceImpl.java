@@ -1,25 +1,24 @@
 package com.unir.proyecto.service;
+import java.time.LocalDate;
+import java.util.stream.Collectors;
 
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import com.unir.proyecto.facade.model.libro;
 import com.unir.proyecto.facade.LibrosFacade;
 
 import com.unir.proyecto.data.OrdenJpaRepository;
-
 import com.unir.proyecto.data.model.Orden;
+import com.unir.proyecto.data.model.OrdenItem;
 import com.unir.proyecto.controller.model.OrdenRequest;
 
 import java.util.List;
 import java.util.Objects;
 
 
+
 @Service
-public abstract class OrdenesServiceImpl implements OrdenesService {
+public class OrdenesServiceImpl implements OrdenesService {
 
     @Autowired //Inyeccion por campo (field injection). Es la menos recomendada.
     private LibrosFacade librosFacade;
@@ -53,7 +52,24 @@ public abstract class OrdenesServiceImpl implements OrdenesService {
                 return null;
             }
             else{
-            //guardar datos
+                List<OrdenItem> items = peticion.getLibros().stream()
+                        .map(req -> OrdenItem.builder()
+                                .libroId(req.getLibroId())
+                                .cantidad(req.getCantidad())
+                                .precio(req.getPrecio())
+                                .subtotal(req.getSubtotal())
+                                .build())
+                        .collect(Collectors.toList());
+
+                double total = items.stream().mapToDouble(OrdenItem::getSubtotal).sum();
+
+                Orden orden = Orden.builder()
+                        .fecha(LocalDate.now())
+                        .estado("CONFIRMADA")
+                        .total(total)
+                        .libros(items)
+                        .build();
+                return repository.save(orden);
             }
         }
 
@@ -62,6 +78,12 @@ public abstract class OrdenesServiceImpl implements OrdenesService {
     @Override
     public Orden getOrden(String id) {
         return repository.findById(Long.valueOf(id)).orElse(null);
+    }
+
+    @Override
+    public List<Orden> getOrdenes() {
+        List<Orden> ordenes= repository.findAll();
+        return ordenes.isEmpty() ? null : ordenes;
     }
 
 }
