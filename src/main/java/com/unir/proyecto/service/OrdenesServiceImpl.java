@@ -12,6 +12,7 @@ import com.unir.proyecto.data.OrdenJpaRepository;
 import com.unir.proyecto.data.model.Orden;
 import com.unir.proyecto.data.model.OrdenItem;
 import com.unir.proyecto.controller.model.OrdenRequest;
+import com.unir.proyecto.exception.OrdenException;
 
 import java.util.List;
 import java.util.Objects;
@@ -45,7 +46,7 @@ public class OrdenesServiceImpl implements OrdenesService {
         log.info("listaLibros recibidos por ms-books-search: {}", listaLibros);
 
         if (listaLibros.size() != libroIds.size()) {
-            return null;
+            throw new OrdenException("invalid_body", "El libro no existe");
         } else {
             boolean disponible = peticion.getLibros().stream().
                     allMatch(ordenLibro -> listaLibros.stream().anyMatch(libro -> libro.getId().
@@ -53,7 +54,7 @@ public class OrdenesServiceImpl implements OrdenesService {
                             >= ordenLibro.getCantidad()));
 
             if (!disponible) {
-                return null;
+                throw new OrdenException("invalid_body", "No hay existencias o no está visible.");
             }
             else{
                 List<OrdenItem> items = peticion.getLibros().stream()
