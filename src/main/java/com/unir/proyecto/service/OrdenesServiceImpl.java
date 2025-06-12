@@ -2,6 +2,7 @@ package com.unir.proyecto.service;
 import java.time.LocalDate;
 import java.util.stream.Collectors;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.unir.proyecto.facade.model.libro;
@@ -16,7 +17,7 @@ import java.util.List;
 import java.util.Objects;
 
 
-
+@Slf4j
 @Service
 public class OrdenesServiceImpl implements OrdenesService {
 
@@ -35,10 +36,13 @@ public class OrdenesServiceImpl implements OrdenesService {
                 .map(ordenLibro -> String.valueOf(ordenLibro.getLibroId()))
                 .toList();
 
+        log.info("libroIds recibidos: {}", libroIds);
+
         List<libro> listaLibros = libroIds.stream()
                 .map(id -> librosFacade.getLibro(id))
                 .filter(Objects::nonNull)
                 .toList();
+        log.info("listaLibros recibidos por ms-books-search: {}", listaLibros);
 
         if (listaLibros.size() != libroIds.size()) {
             return null;
@@ -69,6 +73,9 @@ public class OrdenesServiceImpl implements OrdenesService {
                         .total(total)
                         .libros(items)
                         .build();
+                // Asignar la orden a cada item
+                items.forEach(item -> item.setOrdenId(orden));
+                orden.setLibros(items);
                 return repository.save(orden);
             }
         }
@@ -82,7 +89,7 @@ public class OrdenesServiceImpl implements OrdenesService {
 
     @Override
     public List<Orden> getOrdenes() {
-        List<Orden> ordenes= repository.findAll();
+        List<Orden> ordenes = repository.findAll();
         return ordenes.isEmpty() ? null : ordenes;
     }
 

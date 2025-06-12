@@ -26,7 +26,7 @@ public class OrdenesController {
 
         log.info("Creating order...");
         Orden ordenCreada = service.createOrden(peticion);
-
+        log.info("Orden creada: ");
         if(ordenCreada != null) {
             OrdenResponse response = new OrdenResponse();
             response.setOrderId(ordenCreada.getOrderId());

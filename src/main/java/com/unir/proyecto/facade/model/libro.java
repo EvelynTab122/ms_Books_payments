@@ -16,7 +16,7 @@ public class libro {
     private String autor;
     private LocalDate fechaPublicacion;
     private String categoria;
-    private String isbn;
+    private int isbn;
     private boolean visibilidad;
     private int valoracion;
     private int cantidad;
