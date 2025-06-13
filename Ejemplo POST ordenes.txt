@@ -1,0 +1,28 @@
+POST ordenes 
+
+BODY:
+
+{
+  "libros": [
+    {
+      "libroId": 3451,
+      "cantidad": 5,
+      "precio": 13650,
+      "subtotal": 68250
+    },
+     {
+      "libroId": 3452,
+      "cantidad": 1,
+      "precio": 13650,
+      "subtotal": 13650
+    }
+  ]
+}
+
+ejemplo derespuesta esperada : 
+{
+    "orderId": 3,
+    "fecha": "2025-06-12",
+    "estado": "CONFIRMADA",
+    "total": 81900.0
+}
